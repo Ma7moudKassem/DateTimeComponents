@@ -5,12 +5,12 @@
 {
     case DateTimeType.DateTime:
         {
-            <input class="form-control pr-2" id="@ComponentId" type="datetime-local" value="@InternalValue.ToString($"{DateTimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" />
+            <input class="form-control pr-2" id="@ComponentId" type="datetime-local" value="@InternalValue.ToString($"{DateTimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" placeholder="@Placeholder" />
             break;
         }
     case DateTimeType.Time:
         {
-            <input class="form-control pr-2" id="@ComponentId" type="time" value="@TiemInternalValue.ToString($"{TimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" />
+            <input class="form-control pr-2" id="@ComponentId" type="time" value="@TiemInternalValue.ToString($"{TimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" placeholder="@Placeholder" />
             break;
         }
     default: break;
@@ -23,6 +23,7 @@
     [Parameter] public bool Enabled { get; set; } = true;
     [Parameter] public string TimeFormat { get; set; } = "hh\\:mm";
     [Parameter] public string DateTimeFormat { get; set; } = "yyyy\\:MM\\:dd";
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
     [Parameter] public TValue Value { get; set; }
     [Parameter] public DateTimeType DateTimeType { get; set; }
     [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
