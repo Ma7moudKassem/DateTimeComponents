@@ -1,0 +1,27 @@
+﻿<h1>Welcome</h1>
+
+<EditForm Model="@Employee">
+
+    <label>Name</label>
+    <InputText class="form-control" @bind-Value="@Employee.Name" />
+
+    <label>Address</label>
+    <InputText class="form-control" @bind-Value="@Employee.Address" />
+
+    <label>Age</label>
+    <InputNumber class="form-control" @bind-Value="@Employee.Age" />
+
+    <div class="row mb-2">
+        <div class="col-md-4">
+            <label>Time</label>
+            <TimeInput DateTimeType="DateTimeType.Time" @bind-Value="@Employee.Time"></TimeInput>
+        </div>
+        <div class="col-md-4">
+            <label>DateTime</label>
+            <TimeInput DateTimeType="DateTimeType.DateTime" @bind-Value="@Employee.DateTime"></TimeInput>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="@(()=>Post(Employee))">AddEmployee</button>
+
+</EditForm>

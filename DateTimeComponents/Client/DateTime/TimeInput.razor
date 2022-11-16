@@ -1,0 +1,50 @@
+﻿@namespace DateTimeComponents.Client
+
+@switch (DateTimeType)
+{
+    case DateTimeType.DateTime:
+        {
+            <input class="form-control pr-2" id="@ComponentId" type="datetime-local" value="@TValue.ToString($"{DateTimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" />
+            break;
+        }
+    case DateTimeType.Time:
+        {
+            <input class="form-control pr-2" id="@ComponentId" type="time" value="@TValue.ToString($"{TimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" />
+            break;
+        }
+    default: break;
+}
+
+@code {
+
+    private long ComponentId = DateTime.Now.Ticks;
+
+    [Parameter] public bool Enabled { get; set; } = true;
+    [Parameter] public string TimeFormat { get; set; } = "hh\\:mm";
+    [Parameter] public string DateTimeFormat { get; set; } = "yyyy\\:MM\\:dd";
+    [Parameter] public DateTime Value { get; set; }
+    [Parameter] public DateTimeType DateTimeType { get; set; }
+    [Parameter] public EventCallback<DateTime> ValueChanged { get; set; }
+
+    private DateTime TValue { get; set; } = DateTime.Now;
+
+    protected override void OnParametersSet()
+    {
+        TValue = Value;
+
+        base.OnParametersSet();
+    }
+
+    private void OnValueChanged(ChangeEventArgs args)
+    {
+        DateTime dateTime = DateTime.Now;
+
+        string value = args.Value.ToString();
+
+        dateTime = value == string.Empty ? DateTime.Today : DateTime.Parse(value);
+
+        Value = dateTime;
+        TValue = dateTime;
+        ValueChanged.InvokeAsync(dateTime);
+    }
+}
