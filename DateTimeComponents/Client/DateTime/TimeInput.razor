@@ -35,6 +35,8 @@
     {
         if (DateTimeType.Equals(DateTimeType.DateTime))
         {
+            if (typeof(TValue) != typeof(DateTime))
+                throw new Exception("Value type should be DateTime");
 
             DateTime dateTime = DateTime.Now;
 
@@ -46,13 +48,16 @@
             InternalValue = dateTime;
             ValueChanged.InvokeAsync(Value);
         }
-        else
+        else if (DateTimeType.Equals(DateTimeType.Time))
         {
-            if (!TimeSpan.TryParseExact(args.Value.ToString(), "hh\\:mm\\:ss", null, out var result))
+            if (typeof(TValue) != typeof(TimeSpan))
+                throw new Exception("Value type should be TimeSpan");
+
+            if (!TimeSpan.TryParseExact(args.Value.ToString(), "hh\\:mm\\:ss", null, out TimeSpan time))
                 return;
 
-            TiemInternalValue = result;
-            Value = (TValue)(object)result;
+            TiemInternalValue = time;
+            Value = (TValue)(object)time;
             ValueChanged.InvokeAsync(Value);
         }
     }
