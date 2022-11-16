@@ -1,15 +1,16 @@
 ﻿@namespace DateTimeComponents.Client
+@typeparam TValue
 
 @switch (DateTimeType)
 {
     case DateTimeType.DateTime:
         {
-            <input class="form-control pr-2" id="@ComponentId" type="datetime-local" value="@TValue.ToString($"{DateTimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" />
+            <input class="form-control pr-2" id="@ComponentId" type="datetime-local" value="@InternalValue.ToString($"{DateTimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" />
             break;
         }
     case DateTimeType.Time:
         {
-            <input class="form-control pr-2" id="@ComponentId" type="time" value="@TValue.ToString($"{TimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" />
+            <input class="form-control pr-2" id="@ComponentId" type="time" value="@TiemInternalValue.ToString($"{TimeFormat}")" @onchange="OnValueChanged" disabled="@(!Enabled)" />
             break;
         }
     default: break;
@@ -22,29 +23,37 @@
     [Parameter] public bool Enabled { get; set; } = true;
     [Parameter] public string TimeFormat { get; set; } = "hh\\:mm";
     [Parameter] public string DateTimeFormat { get; set; } = "yyyy\\:MM\\:dd";
-    [Parameter] public DateTime Value { get; set; }
+    [Parameter] public TValue Value { get; set; }
     [Parameter] public DateTimeType DateTimeType { get; set; }
-    [Parameter] public EventCallback<DateTime> ValueChanged { get; set; }
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
 
-    private DateTime TValue { get; set; } = DateTime.Now;
+    private DateTime InternalValue { get; set; } = DateTime.Now;
+    private TimeSpan TiemInternalValue { get; set; }
 
-    protected override void OnParametersSet()
-    {
-        TValue = Value;
-
-        base.OnParametersSet();
-    }
 
     private void OnValueChanged(ChangeEventArgs args)
     {
-        DateTime dateTime = DateTime.Now;
+        if (DateTimeType.Equals(DateTimeType.DateTime))
+        {
 
-        string value = args.Value.ToString();
+            DateTime dateTime = DateTime.Now;
 
-        dateTime = value == string.Empty ? DateTime.Today : DateTime.Parse(value);
+            string value = args.Value.ToString();
 
-        Value = dateTime;
-        TValue = dateTime;
-        ValueChanged.InvokeAsync(dateTime);
+            dateTime = value == string.Empty ? DateTime.Today : DateTime.Parse(value);
+
+            Value = (TValue)(object)dateTime;
+            InternalValue = dateTime;
+            ValueChanged.InvokeAsync(Value);
+        }
+        else
+        {
+            if (!TimeSpan.TryParseExact(args.Value.ToString(), "hh\\:mm\\:ss", null, out var result))
+                return;
+
+            TiemInternalValue = result;
+            Value = (TValue)(object)result;
+            ValueChanged.InvokeAsync(Value);
+        }
     }
 }
